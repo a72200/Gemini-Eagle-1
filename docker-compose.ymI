@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # ⚖️ حاوية وكيل المحاماة الذكي
+  law_agent:
+    build:
+      context: .
+      dockerfile: ./src/law_agent/Dockerfile
+    environment:
+      - GOOGLE_CLOUD_PROJECT=the-seven-worlds-gemini
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - VECTOR_INDEX_ID=gemini-bird-memory-index
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src/law_agent:/app
+    restart: always
+
+  # 🏛️ حاوية وكيل المعماري الرقمي
+  arch_agent:
+    build:
+      context: .
+      dockerfile: ./src/arch_agent/Dockerfile
+    environment:
+      - GOOGLE_CLOUD_PROJECT=the-seven-worlds-gemini
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./src/arch_agent:/app
+    restart: always
+
+  # 🤖 حاوية نظام محاكاة السفير الرقمي (ROS 2 / WebRTC Interface)
+  ambassador_robot:
+    build:
+      context: .
+      dockerfile: ./src/ambassador_robot/Dockerfile
+    environment:
+      - GOOGLE_CLOUD_PROJECT=the-seven-worlds-gemini
+      - ROBOT_ID=seven_worlds_ambassador_01
+    ports:
+      - "8554:8554" # منفذ بث الفيديو اللحظي WebRTC
+    devices:
+      - "/dev/video0:/dev/video0" # ربط كاميرا الجهاز الحقيقية بالروبوت للمحاكاة
+    restart: always
+
