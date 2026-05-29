@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  law_agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.law
+    container_name: gemini_law_agent
+    environment:
+      - ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    restart: always
+    networks:
+      - gemini_network
+
+  ambassador_robot:
+    build:
+      context: .
+      dockerfile: Dockerfile.ambassador
+    container_name: gemini_ambassador_robot
+    environment:
+      - ENV=production
+      - STREAM_API_KEY=${STREAM_API_KEY}
+    restart: always
+    networks:
+      - gemini_network
+
+networks:
+  gemini_network:
+    driver: bridge
